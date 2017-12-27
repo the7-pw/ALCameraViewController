@@ -37,6 +37,7 @@ internal class CropOverlay: UIView {
     var isResizable: Bool = false
     var isMovable: Bool = false
     var minimumSize: CGSize = CGSize.zero
+    var aspectRatio:[CGFloat] = [0,0]
 
     internal override init(frame: CGRect) {
         super.init(frame: frame)
@@ -184,8 +185,16 @@ internal class CropOverlay: UIView {
 					newFrame = CGRect.zero
 				}
 
-                let minimumFrame = CGRect(x: newFrame.origin.x, y: newFrame.origin.y, width: max(newFrame.size.width, minimumSize.width + 2 * outterGap), height: max(newFrame.size.height, minimumSize.height + 2 * outterGap))
-				frame = minimumFrame
+                if aspectRatio[0] == 0 || aspectRatio[1] == 0{
+                    let minimumFrame = CGRect(x: newFrame.origin.x, y: newFrame.origin.y, width: max(newFrame.size.width, minimumSize.width + 2 * outterGap), height: max(newFrame.size.height, minimumSize.height + 2 * outterGap))
+                    frame = minimumFrame
+                }else{
+                    let width = max(newFrame.size.width, minimumSize.width + 2 * outterGap)
+                    let height = aspectRatio[1] * width/aspectRatio[0]
+                    let minimumFrame = CGRect(x: newFrame.origin.x, y: newFrame.origin.y, width:width, height: height)
+                    frame = minimumFrame
+                }
+                
 				layoutSubviews()
 
 				gestureRecognizer.setTranslation(CGPoint.zero, in: self)
